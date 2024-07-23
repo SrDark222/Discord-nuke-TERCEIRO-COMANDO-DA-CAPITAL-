@@ -23,7 +23,7 @@ baner = f'''
 {r}|  \| | | | | |/ / _ {m}\  _ \ / _ \| __|
 {r}| |\  | |_| |   <  __{m}/ |_) | (_) | |_ 
 {r}|_| \_|\__,_|_|\_\___{m}|____/ \___/ \__|
-{y}Feito por: {g}https://github.com/Sigma-cc'''
+{y}Feito por: {g}https://github.com/SrDark222'''
 
 async def delete_all_channel(guild):
     deleted = 0

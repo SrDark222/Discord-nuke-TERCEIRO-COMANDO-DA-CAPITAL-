@@ -1,9 +1,9 @@
 # Atualizar e instalar pacotes necessários
-`apt update && apt upgrade
-pkg install python git`
+```apt update && apt upgrade
+pkg install python git``
 
 # Clonar o repositório do GitHub
-`git clone https://github.com/SrDark222/Discord-nuke-TERCEIRO-COMANDO-DA-CAPITAL-.git`
+``git clone https://github.com/SrDark222/Discord-nuke-TERCEIRO-COMANDO-DA-CAPITAL-.git``
 
 # Navegar até o diretório do repositório clonado
 `cd Discord-nuke-TERCEIRO-COMANDO-DA-CAPITAL-`

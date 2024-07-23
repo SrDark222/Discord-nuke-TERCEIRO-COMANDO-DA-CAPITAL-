@@ -116,20 +116,20 @@ def stop_bot(stop_event):
     while True:
         choice = _input(f'''
 {baner}                
-{c}--------------------------------------------
-{b}[Menu]
-    {y}└─[1] {m}- {g}Executar Setup Nuke Bot
-    {y}└─[2] {m}- {g}Sair
-    {y}└─[3] {m}- {g}Parar
+{w}--------------------------------------------
+{w}[Menu]
+    {y}└─[1] {g}Executar Setup Nuke Bot
+    {y}└─[2] {g}Sair
+    {y}└─[3] {g}Parar
 {y}====>{g}''')
         if choice == '1':
             return
         elif choice == '2':
-            print(f'{dr}Saindo...')
+            print(f'{r}Saindo...')
             exit()
         elif choice == '3':
             stop_event.set()
-            print(f'{dr}Parando...')
+            print(f'{r}Parando...')
             return
 
 async def main(token, name, message, stop_event):
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     
     token = _input(f'{y}Insira o token do bot:{g}')
     name = _input(f'{y}Insira o nome para os canais criados:{g}')
-    message = 'Mensagem para todos os canais de texto'
+    message = 'Mensagem para o canal de texto'
     
     asyncio.run(main(token, name, message, stop_event))
     stop_thread.join()

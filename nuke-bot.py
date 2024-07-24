@@ -4,7 +4,6 @@ from colorama import init, Fore as cc
 from os import name as os_name, system
 from sys import exit
 import time
-import itertools
 
 # Inicialização do Colorama
 init()
@@ -28,13 +27,13 @@ def _input(text):
 
 # Banner decorado
 banner = f'''
-{r}██████╗     ██╗  ██╗
-{r}██╔══██╗    ██║ ██╔╝
-{r}██║  ██║    █████╔╝ 
-{r}██║  ██║    ██╔═██╗ 
-{r}██████╔╝    ██║  ██╗
-{r}╚═════╝     ╚═╝  ╚═╝
-{y}Feito por: {g}Menor dk 🇾🇪
+{R}██████╗     ██╗  ██╗
+{R}██╔══██╗    ██║ ██╔╝
+{R}██║  ██║    █████╔╝ 
+{R}██║  ██║    ██╔═██╗ 
+{R}██████╔╝    ██║  ██╗
+{R}╚═════╝     ╚═╝  ╚═╝
+{Y}Feito por: {G}Menor dk 🇾🇪
 '''
 
 # Função para exibir menu com animação
@@ -42,13 +41,13 @@ def show_menu():
     clear()
     menu = f'''
 {banner}
-{c}--------------------------------------------
-{b}[Menu]
-{y}1 - {g}Executar Setup Nuke Bot
-{y}2 - {g}Sair
-{y}3 - {g}Parar
-{y}4 - {g}Ver Servidores do Bot
-{c}--------------------------------------------
+{C}--------------------------------------------
+{B}[Menu]
+{Y}1 - {G}Executar Setup Nuke Bot
+{Y}2 - {G}Sair
+{Y}3 - {G}Parar
+{Y}4 - {G}Ver Servidores do Bot
+{C}--------------------------------------------
 '''
     print(menu)
 
@@ -57,12 +56,12 @@ def show_attack_options():
     clear()
     options = f'''
 {banner}
-{c}--------------------------------------------
-{b}[Selecione]
-{y}1 - {g}Nuke de todos os servidores.
-{y}2 - {g}Nuke apenas um servidor.
-{y}3 - {g}Sair
-{c}--------------------------------------------
+{C}--------------------------------------------
+{B}[Selecione]
+{Y}1 - {G}Nuke de todos os servidores.
+{Y}2 - {G}Nuke apenas um servidor.
+{Y}3 - {G}Sair
+{C}--------------------------------------------
 '''
     print(options)
 
@@ -119,8 +118,8 @@ async def main():
         choice = _input('Escolha uma opção: ')
         
         if choice == '1':
-            token = _input(f'{y}Insira o token do bot:{g}')
-            name = _input(f'{y}Insira o nome para os canal/nomes ')
+            token = _input(f'{Y}Insira o token do bot:{G}')
+            name = _input(f'{Y}Insira o nome para os canal/nomes:{G}')
             message = '''# DKZIN 🔥🥋🇾🇪
 > - TERCEIRO COMANDO DA CAPITAL NA ATIVA,  ENTREM PRA TROPA E SEJAM FELIZES 👑
 - https://discord.com/invite/gZSx3n8Csa
@@ -131,7 +130,7 @@ async def main():
 @here @everyone'''
             
             show_attack_options()
-            choice_type = _input(f'{y}Escolha o tipo de ataque:{g}')
+            choice_type = _input(f'{Y}Escolha o tipo de ataque:{G}')
             
             client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
             
@@ -143,7 +142,7 @@ async def main():
                     await client.close()
             
             elif choice_type == '2':
-                guild_id = _input(f'{y}Insira o id do servidor:{g}')
+                guild_id = _input(f'{Y}Insira o id do servidor:{G}')
                 @client.event
                 async def on_ready():
                     for guild in client.guilds:
@@ -158,7 +157,7 @@ async def main():
                 client.run(token)
                 _input('Nuke concluído, pressione Enter para voltar ao menu...')
             except Exception as error:
-                _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
+                _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
         
         elif choice == '2':
             exit()
@@ -168,36 +167,36 @@ async def main():
             _input(f'{dr}Bot Parado... Pressione Enter para voltar ao menu...')
         
         elif choice == '4':
-            token = _input(f'{y}Insira o token do bot:{g}')
+            token = _input(f'{Y}Insira o token do bot:{G}')
             client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
             
             @client.event
             async def on_ready():
                 clear()
                 for guild in client.guilds:
-                    print(f'{r}Servidor: {m}{guild.name}')
-                    print(f'{c}ID: {g}{guild.id}')
-                    print(f'{b}Membros: {g}{len(guild.members)}')
-                    print(f'{y}Canais: {g}{len(guild.channels)}')
-                    print(f'{m}Roles: {g}{len(guild.roles)}')
+                    print(f'{R}Servidor: {M}{guild.name}')
+                    print(f'{C}ID: {G}{guild.id}')
+                    print(f'{B}Membros: {G}{len(guild.members)}')
+                    print(f'{Y}Canais: {G}{len(guild.channels)}')
+                    print(f'{M}Roles: {G}{len(guild.roles)}')
                     perms = guild.me.guild_permissions
-                    print(f'{w}Permissões:')
-                    print(f'  {c}KICK_MEMBERS: {g}{perms.kick_members}')
-                    print(f'  {c}BAN_MEMBERS: {g}{perms.ban_members}')
-                    print(f'  {c}MANAGE_CHANNELS: {g}{perms.manage_channels}')
-                    print(f'  {c}MANAGE_ROLES: {g}{perms.manage_roles}')
-                    print(f'  {c}ADMINISTRATOR: {g}{perms.administrator}')
-                    print(f'{c}--------------------------------------------')
+                    print(f'{W}Permissões:')
+                    print(f'  {C}KICK_MEMBERS: {G}{perms.kick_members}')
+                    print(f'  {C}BAN_MEMBERS: {G}{perms.ban_members}')
+                    print(f'  {C}MANAGE_CHANNELS: {G}{perms.manage_channels}')
+                    print(f'  {C}MANAGE_ROLES: {G}{perms.manage_roles}')
+                    print(f'  {C}ADMINISTRATOR: {G}{perms.administrator}')
+                    print(f'{C}--------------------------------------------')
                 await client.close()
             
             try:
                 client.run(token)
                 _input('Pressione Enter para voltar ao menu...')
             except Exception as error:
-                _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
+                _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
         
         else:
-            _input(f'{r}Opção inválida. Pressione Enter para voltar...')
+            _input(f'{R}Opção inválida. Pressione Enter para voltar...')
 
 # Executa o menu principal
 main()

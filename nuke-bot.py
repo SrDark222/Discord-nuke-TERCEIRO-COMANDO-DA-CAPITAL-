@@ -3,6 +3,7 @@ from discord.ext import commands
 from colorama import init, Fore as cc
 from os import name as os_name, system
 from sys import exit
+import asyncio
 import time
 
 # Inicialização do Colorama
@@ -154,7 +155,7 @@ async def main():
                 exit()
             
             try:
-                client.run(token)
+                await client.start(token)
                 _input('Nuke concluído, pressione Enter para voltar ao menu...')
             except Exception as error:
                 _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
@@ -190,7 +191,7 @@ async def main():
                 await client.close()
             
             try:
-                client.run(token)
+                await client.start(token)
                 _input('Pressione Enter para voltar ao menu...')
             except Exception as error:
                 _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
@@ -199,4 +200,5 @@ async def main():
             _input(f'{R}Opção inválida. Pressione Enter para voltar...')
 
 # Executa o menu principal
-main()
+if __name__ == "__main__":
+    asyncio.run(main())

